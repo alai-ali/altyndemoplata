@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Anchor Demo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #0f0f0f;
+  color: #fff;
+  text-align: center;
+  padding: 40px;
+}
+button {
+  font-size: 18px;
+  padding: 15px 25px;
+  margin: 15px;
+  border: none;
+  border-radius: 8px;
+}
+.allow { background: #00c853; color: #000; }
+.deny { background: #d50000; color: #fff; }
+.info {
+  margin-top: 30px;
+  opacity: 0.8;
+  font-size: 14px;
+}
+</style>
+</head>
+<body>
+
+<h1>Демонстрация физического якоря</h1>
+
+<p id="status">Проверка устройства...</p>
+
+<button onclick="registerDevice()" class="allow">Зарегистрировать ЭТО устройство</button>
+
+<div class="info">
+<p>Без регистрации с этого устройства доступ невозможен.</p>
+<p>Другие телефоны будут заблокированы.</p>
+</div>
+
+<script>
+function getDeviceFingerprint() {
+  return btoa(
+    navigator.userAgent +
+    navigator.language +
+    screen.width +
+    screen.height +
+    Intl.DateTimeFormat().resolvedOptions().timeZone
+  );
+}
+
+const currentDevice = getDeviceFingerprint();
+const savedDevice = localStorage.getItem("ANCHOR_DEVICE");
+
+const statusEl = document.getElementById("status");
+
+if (savedDevice === currentDevice) {
+  statusEl.innerHTML = "✅ Устройство подтверждено. Доступ разрешён.";
+  statusEl.style.color = "#00e676";
+} else if (savedDevice) {
+  statusEl.innerHTML = "⛔ Доступ запрещён. Устройство не совпадает.";
+  statusEl.style.color = "#ff1744";
+} else {
+  statusEl.innerHTML = "⚠️ Устройство не зарегистрировано.";
+  statusEl.style.color = "#ffea00";
+}
+
+function registerDevice() {
+  localStorage.setItem("ANCHOR_DEVICE", currentDevice);
+  location.reload();
+}
+</script>
+
+</body>
+</html>
